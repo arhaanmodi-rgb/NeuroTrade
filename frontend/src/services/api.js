@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const rawUrl = (import.meta.env.VITE_API_URL || '/api').trim()
+const rawUrl = (import.meta.env.VITE_API_URL || 'https://neurotrade-5r2q.onrender.com').trim()
 const BASE = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl
 
 const api = axios.create({

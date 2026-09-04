@@ -30,13 +30,24 @@ app = FastAPI(
 )
 
 # CORS for React frontend (Vercel, Render, local dev)
+origins = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
+    "https://frontend-ten-mocha-65.vercel.app",
+    "https://neurotrade-5r2q.onrender.com"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"https://.*\.vercel\.app|http://localhost:.*|http://127.0.0.1:.*|https://.*\.onrender\.com",
-    allow_origins=['*'],
+    allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*']
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 # Routers
