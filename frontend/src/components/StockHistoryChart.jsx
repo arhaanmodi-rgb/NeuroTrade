@@ -299,17 +299,53 @@ export default function StockHistoryChart({ stock, onSelectStock }) {
             justifyContent: 'center',
             padding: 24,
             textAlign: 'center',
-            background: 'rgba(244, 63, 94, 0.06)',
+            background: error.toLowerCase().includes('not listed') || error.toLowerCase().includes('invalid') || error.toLowerCase().includes('not found')
+              ? 'rgba(244, 63, 94, 0.06)'
+              : 'rgba(59, 130, 246, 0.06)',
             borderRadius: 12,
-            border: '1px solid rgba(244, 63, 94, 0.2)'
+            border: error.toLowerCase().includes('not listed') || error.toLowerCase().includes('invalid') || error.toLowerCase().includes('not found')
+              ? '1px solid rgba(244, 63, 94, 0.2)'
+              : '1px solid rgba(59, 130, 246, 0.2)'
           }}>
-            <div style={{ fontSize: 24, marginBottom: 8 }}>🚨</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#f43f5e', marginBottom: 4 }}>
-              Unlisted / Invalid Stock Symbol: "{stock}"
+            <div style={{ fontSize: 24, marginBottom: 8 }}>
+              {error.toLowerCase().includes('not listed') || error.toLowerCase().includes('invalid') || error.toLowerCase().includes('not found') ? '🚨' : '⚡'}
             </div>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', maxWidth: 460 }}>
-              This stock is not listed on the National Stock Exchange (NSE) or Bombay Stock Exchange (BSE). Please choose a valid listed company (e.g., RELIANCE, TATAMOTORS, INFY, TCS, HDFCBANK).
+            <div style={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: error.toLowerCase().includes('not listed') || error.toLowerCase().includes('invalid') || error.toLowerCase().includes('not found') ? '#f43f5e' : '#60a5fa',
+              marginBottom: 4
+            }}>
+              {error.toLowerCase().includes('not listed') || error.toLowerCase().includes('invalid') || error.toLowerCase().includes('not found')
+                ? `Unlisted / Invalid Stock Symbol: "${stock}"`
+                : 'Cloud AI Backend Initializing...'}
             </div>
+            <div style={{ fontSize: 12, color: 'var(--text-secondary)', maxWidth: 460, marginBottom: 10 }}>
+              {error.toLowerCase().includes('not listed') || error.toLowerCase().includes('invalid') || error.toLowerCase().includes('not found')
+                ? 'This stock is not listed on the National Stock Exchange (NSE) or Bombay Stock Exchange (BSE). Please choose a valid listed company (e.g., RELIANCE, TATAMOTORS, INFY, TCS, HDFCBANK).'
+                : (error || 'Connecting to Render AI server. Free tier cloud instances may take ~30s on first load.')}
+            </div>
+            <button
+              onClick={() => {
+                setLoading(true)
+                setError(null)
+                fetchStockHistory(stock, period)
+                  .then(res => { setChartData(res); setLoading(false); })
+                  .catch(err => { setError(err?.response?.data?.detail || err.message || 'Error'); setLoading(false); })
+              }}
+              style={{
+                background: 'var(--blue)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 6,
+                padding: '6px 14px',
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              🔄 Retry Connection
+            </button>
           </div>
         ) : loading ? (
           <div style={{
