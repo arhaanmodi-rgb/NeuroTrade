@@ -13,10 +13,13 @@ from api.services.trade_log import init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
-    Base.metadata.create_all(bind=engine)
-    apply_migrations()
-    print('[NeuroTrade API] Database initialized & models loaded with column migrations.')
+    try:
+        init_db()
+        Base.metadata.create_all(bind=engine)
+        apply_migrations()
+        print('[NeuroTrade API] Database initialized & models loaded with column migrations.')
+    except Exception as e:
+        print(f'[NeuroTrade API] Notice: Database startup check: {e}')
     yield
 
 app = FastAPI(
