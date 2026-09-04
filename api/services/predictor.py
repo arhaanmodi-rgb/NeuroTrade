@@ -18,34 +18,35 @@ INITIAL_CASH = 10_000_000.0  # Flexible high initial sandbox balance (₹1 Crore
 
 class Predictor:
     def __init__(self):
-        self.agents = {}       # stock -> DQNAgent
-        self.envs = {}         # stock -> TradingEnvironment
+        self.agents = {}       # stock -> DQNAgent (lazy loaded & cached)
+        self.envs = {}         # stock -> TradingEnvironment (lazy loaded & cached)
         self.portfolios = {}   # stock -> {cash, shares, avg_buy_price, bought_date, portfolio_value}
+        self.available_stocks = set(CORE_STOCKS)
         self.universal_agent = None
-        self._load_all_models()
+        self._discover_models()
     
-    def _load_all_models(self):
+    def _discover_models(self):
         models_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'models')
-        all_stocks = set(CORE_STOCKS)
-        
         if os.path.exists(models_dir):
             for fname in os.listdir(models_dir):
                 if fname.endswith('_dqn_best.pth') or fname.endswith('_dqn.pth'):
                     sym = fname.replace('_dqn_best.pth', '').replace('_dqn.pth', '').upper()
-                    all_stocks.add(sym)
+                    self.available_stocks.add(sym)
 
-        for stock in sorted(all_stocks):
-            best_path = f'models/{stock}_dqn_best.pth'
-            regular_path = f'models/{stock}_dqn.pth'
-            model_path = best_path if os.path.exists(best_path) else regular_path
+        self.universal_agent = DQNAgent(state_size=24, action_size=3)
+        self.universal_agent.epsilon = 0.0
+        print(f'[Predictor] Cataloged {len(self.available_stocks)} verified models with on-demand lazy loading.')
+
+    def _get_or_load_agent_and_env(self, stock: str):
+        if stock in self.agents and stock in self.envs:
+            return self.agents[stock], self.envs[stock]
             
-            if not os.path.exists(model_path):
-                continue
-            
-            data_path = f'data/features/{stock}.csv'
-            if not os.path.exists(data_path):
-                continue
-            
+        best_path = f'models/{stock}_dqn_best.pth'
+        regular_path = f'models/{stock}_dqn.pth'
+        model_path = best_path if os.path.exists(best_path) else (regular_path if os.path.exists(regular_path) else None)
+        data_path = f'data/features/{stock}.csv'
+        
+        if model_path and os.path.exists(model_path) and os.path.exists(data_path):
             try:
                 checkpoint = torch.load(model_path, map_location='cpu', weights_only=False)
                 state_size = int(checkpoint.get('state_size', 24))
@@ -60,30 +61,15 @@ class Predictor:
                 agent = DQNAgent(state_size=state_size, action_size=action_size)
                 agent.load(model_path)
                 agent.epsilon = 0.0
-                
                 env.reset()
                 
                 self.agents[stock] = agent
                 self.envs[stock] = env
-                self.portfolios[stock] = {
-                    'cash': INITIAL_CASH,
-                    'shares': 0.0,
-                    'avg_buy_price': 0.0,
-                    'bought_date': None,
-                    'portfolio_value': INITIAL_CASH
-                }
-                
-                if self.universal_agent is None:
-                    self.universal_agent = agent
-                    
-                print(f'[Predictor] Loaded model for {stock} (state_size={state_size})')
+                return agent, env
             except Exception as e:
-                print(f'[Predictor] Error loading {stock}: {e}')
+                print(f'[Predictor] Error lazy-loading {stock}: {e}')
                 
-        if self.universal_agent is None:
-            self.universal_agent = DQNAgent(state_size=24, action_size=3)
-            self.universal_agent.epsilon = 0.0
-            print('[Predictor] Universal DQN initialized for 7,000+ NSE & BSE stocks.')
+        return self.universal_agent, None
 
     def _synthesize_state_for_any_stock(self, stock: str, ohlcv: dict, state_size: int = 24) -> np.ndarray:
         price = ohlcv['close']
@@ -216,16 +202,12 @@ class Predictor:
         portfolio = self.get_portfolio_position(stock)
         portfolio['portfolio_value'] = portfolio['cash'] + (portfolio['shares'] * price)
         
-        if stock in self.agents:
-            agent = self.agents[stock]
-            env = self.envs[stock]
+        agent, env = self._get_or_load_agent_and_env(stock)
+        
+        if env is not None:
             state = env._get_state()
             state = self.adapt_state(state, agent.state_size)
         else:
-            agent = self.universal_agent or next(iter(self.agents.values()), None)
-            if agent is None:
-                agent = DQNAgent(state_size=24, action_size=3)
-                agent.epsilon = 0.0
             state = self._synthesize_state_for_any_stock(stock, ohlcv, agent.state_size)
         
         q_values = agent.get_q_values(state)
@@ -265,7 +247,7 @@ class Predictor:
         }
     
     def get_loaded_stocks(self) -> list[str]:
-        return list(self.agents.keys())
+        return sorted(list(self.available_stocks))
 
 _predictor_instance = None
 
