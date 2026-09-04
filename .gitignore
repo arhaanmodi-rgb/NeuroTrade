@@ -1,20 +1,20 @@
 # ============================================================
-# SECRETS & ENVIRONMENT VARIABLES (CRITICAL - DO NOT COMMIT)
+# SECRETS & ENVIRONMENT VARIABLES (NEVER COMMIT)
 # ============================================================
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-*.env
+.env.*
+!.env.example
 
 # ============================================================
-# DATABASES & LOCAL STORAGE
+# DATABASES & LOCAL RUNTIME STORAGE
 # ============================================================
 *.db
 *.sqlite
 *.sqlite3
 data/neurotrade.db
+data/processed/
+logs/
+*.log
 
 # ============================================================
 # PYTHON & VIRTUAL ENVIRONMENTS
@@ -45,19 +45,18 @@ wheels/
 *.egg
 
 # ============================================================
-# NODE & JAVASCRIPT FRONTEND
+# NODE & FRONTEND BUILD ASSETS
 # ============================================================
 node_modules/
 frontend/node_modules/
 frontend/dist/
 frontend/dist-ssr/
-*.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
 # ============================================================
-# IDE & SYSTEM FILES
+# IDE & SYSTEM ARTIFACTS
 # ============================================================
 .idea/
 .vscode/
@@ -65,4 +64,3 @@ yarn-error.log*
 *.swo
 .DS_Store
 Thumbs.db
-*.log
