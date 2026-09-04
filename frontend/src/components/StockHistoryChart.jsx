@@ -169,7 +169,7 @@ export default function StockHistoryChart({ stock, onSelectStock }) {
               type="text"
               value={searchQuery}
               onChange={handleSearchInput}
-              placeholder="🔍 Search 93 Verified Stocks (e.g. INFY, TATAMOTORS)"
+              placeholder="🔍 Search 88 Verified AI Stocks (e.g. INFY, TATAMOTORS)"
               style={{
                 width: 240,
                 padding: '6px 12px',

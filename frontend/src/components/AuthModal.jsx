@@ -92,8 +92,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           </h2>
           <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>
             {isRegister
-              ? 'Access 7,000+ NSE/BSE stocks and save personalized watchlists'
-              : 'Sign in to access your personal AI signals and portfolio'}
+              ? 'Access 88 Verified Deep Q-Network AI Stocks and save personalized portfolios'
+              : 'Sign in to access your personal AI signals and cloud portfolio'}
           </p>
         </div>
 

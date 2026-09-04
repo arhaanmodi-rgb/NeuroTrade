@@ -159,8 +159,8 @@ export default function Sidebar({
           }}
           title="Search 93 Verified Stocks"
         >
-          <span>🔍</span>
-          {isOpen && <span>Search 93 Verified Stocks</span>}
+          <span style={{ fontSize: 14 }}>🔍</span>
+          {isOpen && <span>Search 88 Verified AI Stocks</span>}
         </button>
 
         {/* Add Purchased Stock */}

@@ -58,7 +58,7 @@ export default function StockSearchModal({ isOpen, onClose, onSelectStock }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 20 }}>🔍</span>
-            <span style={{ fontSize: 16, fontWeight: 700 }}>Search 93 Verified Indian Equities</span>
+            <span style={{ fontSize: 16, fontWeight: 700 }}>Search 88 Verified Deep Q-Network Equities</span>
           </div>
           <button
             onClick={onClose}
