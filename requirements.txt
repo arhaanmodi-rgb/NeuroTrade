@@ -1,0 +1,28 @@
+# NeuroTrade Enterprise Dependencies
+
+# Deep Learning & Numerical
+torch
+numpy
+pandas
+matplotlib
+
+# API & Server Framework
+fastapi
+uvicorn[standard]
+pydantic
+requests
+python-dotenv
+httpx
+
+# Database & Authentication (SQLite + PostgreSQL Cloud Ready)
+SQLAlchemy>=2.0.0
+psycopg2-binary
+bcrypt>=4.0.0
+python-jose[cryptography]
+python-multipart
+
+# Real Market Stock Data Feeds
+yfinance
+
+# Testing
+pytest

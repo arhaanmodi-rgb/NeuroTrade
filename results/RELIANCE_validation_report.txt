@@ -1,0 +1,24 @@
+
+==================================================
+Validation Summary
+==================================================
+Initial Capital:        ₹100,000.00
+Final Portfolio:        ₹88,674.34
+Total Return:           -11.33%
+Annualised Return:      -9.92%
+Buy-and-Hold Return:    -15.07%
+vs Buy-and-Hold:        3.75 percentage points
+
+Sharpe Ratio:           -0.94
+Sortino Ratio:          -1.24
+Max Drawdown:           -18.40%
+Calmar Ratio:           -0.54
+
+Win Rate:               21.13%
+Profit Factor:          0.20
+
+Action Counts:
+HOLD: 147 (50.9%)
+BUY:  76 (26.3%)
+SELL: 66 (22.8%)
+==================================================
